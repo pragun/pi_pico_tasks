@@ -10,7 +10,7 @@
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
 #define configUSE_TICKLESS_IDLE                 0
 #define configCPU_CLOCK_HZ                      133000000
-#define configTICK_RATE_HZ                      100
+#define configTICK_RATE_HZ                      1000
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                128
 #define configMAX_TASK_NAME_LEN                 16
@@ -42,10 +42,18 @@
 #define configUSE_MALLOC_FAILED_HOOK            0
 #define configUSE_DAEMON_TASK_STARTUP_HOOK      0
 
+#ifdef FREERTOS_DEBUG
 /* Run time and task stats gathering related definitions. */
+#define configGENERATE_RUN_TIME_STATS           1
+#define configUSE_TRACE_FACILITY                1
+#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+
+#else
+
 #define configGENERATE_RUN_TIME_STATS           0
 #define configUSE_TRACE_FACILITY                0
 #define configUSE_STATS_FORMATTING_FUNCTIONS    0
+#endif
 
 /* Co-routine related definitions. */
 #define configUSE_CO_ROUTINES                   0
@@ -80,5 +88,11 @@
 #define INCLUDE_xTaskResumeFromISR              1
 
 /* A header file that defines trace macro can be included here. */
+
+#ifdef FREERTOS_DEBUG
+#define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() asm("nop;")
+extern uint32_t free_rtos_time();
+#define portGET_RUN_TIME_COUNTER_VALUE() free_rtos_time()
+#endif
 
 #endif /* FREERTOS_CONFIG_H */
